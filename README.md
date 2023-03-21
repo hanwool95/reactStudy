@@ -93,3 +93,173 @@ JSX는 뭐야? 자바스크립트의 XML이야.
 static/js 안에 코드들을 볼 수 있음.
 
 전체 리액트 라이브러리 소스를 보면. (main.chunk.js 등) 브라우저에서 우리가 작성한 JSX가 변환되어서 사용 됨. 리액트는 JSX가 자동적으로 화면 뒷단에서 브라우저에 사용되도록 변경함.
+
+### Custom Component 실습
+
+```tsx
+function App() {
+  return (
+    <div>
+      <h2>Let's get started!</h2>
+      <p>This is also visible!</p>
+    </div>
+  );
+}
+
+export default App;
+```
+
+컴포넌트는 custom HTML일 뿐.
+
+리액트는 DOM 지시사항을 생성하는 역할을 함.
+
+일반 자바스크립트는 명령형 구조 ⇒ 복잡함.
+
+리액트는 최종상태 지정한 하면, 리액트가 알아서 뒷단에서 생성해줌.
+
+```tsx
+// components/ExpenseItem.js
+
+function ExpenseItem() {
+  return <h2>Expense item!</h2>;
+}
+
+export default ExpenseItem;
+```
+
+리액트 컴포넌트 관례.
+
+첫 단어는 대문자, 그다음 단어 첫 단어 대문자.
+
+컴포넌트는 단지 함수 일 뿐!
+
+```tsx
+import ExpenseItem from "./components/ExpenseItem";
+
+function App() {
+  return (
+    <div>
+      <h2>Let's get started!</h2>
+      <p>This is also visible!</p>
+      <ExpenseItem></ExpenseItem>
+    </div>
+  );
+}
+
+export default App;
+```
+
+Custom Component export 한 것을 재사용 가능.
+
+```tsx
+// components/ExpenseItem.js
+
+function ExpenseItem() {
+  return (
+    <div>
+      <div>March 28th 2021</div>
+      <div>
+        <h2>Car Insurance</h2>
+        <div>$294.67</div>
+      </div>
+    </div>
+  );
+}
+export default ExpenseItem;
+```
+
+리액트 컴포넌트 중요한 규칙.
+
+반드시 하나의 루트 요소를 가져야 한다는 것!
+
+div 태그가 여러개 나열되는 것 같은 두 개 이상의 루트를 허용하지 않음.
+
+가독성을 위해서 괄호로 감싸서 하나의 코드라는 것을 알려주고 오토 포맷으로 가독성을 높일 수 있음.
+
+### Css 추가
+
+```css
+/*ExpenseItem.css*/
+
+.expense-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    padding: 0.5rem;
+    margin: 1rem 0;
+    border-radius: 12px;
+    background-color: #4b4b4b;
+}
+
+.expense-item__description {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-end;
+    flex-flow: column-reverse;
+    justify-content: flex-start;
+    flex: 1;
+}
+
+.expense-item h2 {
+    color: #3a3a3a;
+    font-size: 1rem;
+    flex: 1;
+    margin: 0 1rem;
+    color: white;
+}
+
+.expense-item__price {
+    font-size: 1rem;
+    font-weight: bold;
+    color: white;
+    background-color: #40005d;
+    border: 1px solid white;
+    padding: 0.5rem;
+    border-radius: 12px;
+}
+
+@media (min-width: 580px) {
+    .expense-item__description {
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        flex: 1;
+    }
+
+    .expense-item__description h2 {
+        font-size: 1.25rem;
+    }
+
+    .expense-item__price {
+        font-size: 1.25rem;
+        padding: 0.5rem 1.5rem;
+    }
+}
+```
+
+```tsx
+// components/ExpenseItem.js
+
+import "./ExpenseItem.css";
+
+function ExpenseItem() {
+  return (
+    <div className={"expense-item"}>
+      <div>March 28th 2021</div>
+      <div className={"expense-item__description"}>
+        <h2>Car Insurance</h2>
+        <div className={"expense-item__price"}>$294.67</div>
+      </div>
+    </div>
+  );
+}
+export default ExpenseItem;
+```
+
+css가 응용 프로그램에 삽입되도록 알려야 함.
+
+그리고 css에서 지정한 class 추가해야 함.
+
+jsx에서는 class가 아니라 className으로 class를 정의.(이건 html 코드가 아니라 자바스크립트 코드라는 것을 생각해야 함!)
