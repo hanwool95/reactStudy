@@ -263,3 +263,195 @@ css가 응용 프로그램에 삽입되도록 알려야 함.
 그리고 css에서 지정한 class 추가해야 함.
 
 jsx에서는 class가 아니라 className으로 class를 정의.(이건 html 코드가 아니라 자바스크립트 코드라는 것을 생각해야 함!)
+
+### JSX 동적 데이터
+
+```tsx
+// components/ExpenseItem.js
+
+import "./ExpenseItem.css";
+
+function ExpenseItem() {
+  const expenseDate = new Date(2021, 2, 28);
+  const expenseTitle = "Car Insurance";
+  const expenseAmount = 294.67;
+
+  return (
+    <div className={"expense-item"}>
+      <div>{expenseDate.toISOString()}</div>
+      <div className={"expense-item__description"}>
+        <h2>{expenseTitle}</h2>
+        <div className={"expense-item__price"}>${expenseAmount}</div>
+      </div>
+    </div>
+  );
+}
+export default ExpenseItem;
+```
+
+JSX 코드 안에 특별한 리액트 코드를 사용하여 동적 데이터 사용
+
+- 중괄호! {}
+- 중괄호 안은 결과 값이 출력되는 것.
+
+### Props
+
+```tsx
+import ExpenseItem from "./components/ExpenseItem";
+
+function App() {
+  const expenses = [
+    {
+      id: 21,
+      title: "Car Insurance",
+      amount: 294.67,
+      date: new Date(2021, 2, 28),
+    },
+    {
+      id: 22,
+      title: "Car Insurance",
+      amount: 294.67,
+      date: new Date(2021, 2, 28),
+    },
+    {
+      id: 23,
+      title: "Car Insurance",
+      amount: 294.67,
+      date: new Date(2021, 2, 28),
+    },
+    {
+      id: 24,
+      title: "Car Insurance",
+      amount: 294.67,
+      date: new Date(2021, 2, 28),
+    },
+  ];
+
+  return (
+    <div>
+      <h2>Let's get started!</h2>
+      <p>This is also visible!</p>
+      <ExpenseItem
+        title={expenses[0].title}
+        amount={expenses[0].amount}
+        date={expenses[0].date}
+      />
+      <ExpenseItem
+        title={expenses[1].title}
+        amount={expenses[1].amount}
+        date={expenses[1].date}
+      />
+      <ExpenseItem
+        title={expenses[2].title}
+        amount={expenses[2].amount}
+        date={expenses[2].date}
+      />
+      <ExpenseItem
+        title={expenses[3].title}
+        amount={expenses[3].amount}
+        date={expenses[3].date}
+      />
+    </div>
+  );
+}
+
+export default App;
+```
+
+js에서 매개변수를 받아서 재사용할 수 있는 것처럼 리액트도 동일한 개념이 탑재되어 있음!
+
+props 개념을 이용하여 컴포넌트 재사용.
+
+단순히 컴포넌트 정의할 때 key를 넣고 중괄호 안에 값을 넣을 수 있으며, 컴포넌트 파라미터로 꺼내올 수 있음.
+
+```tsx
+// components/ExpenseItem.js
+
+import "./ExpenseItem.css";
+
+function ExpenseItem(props) {
+  return (
+    <div className={"expense-item"}>
+      <div>{props.date.toISOString()}</div>
+      <div className={"expense-item__description"}>
+        <h2>{props.title}</h2>
+        <div className={"expense-item__price"}>${props.amount}</div>
+      </div>
+    </div>
+  );
+}
+export default ExpenseItem;
+```
+
+props object 안에 key가 할당이 됨.
+
+```tsx
+// components/ExpenseItem.js
+
+import "./ExpenseItem.css";
+
+function ExpenseItem(props) {
+  const month = props.date.toLocaleString("en-US", { month: "long" });
+  const day = props.date.toLocaleString("en-US", { day: "2-digit" });
+  const year = props.date.getFullYear();
+
+  return (
+    <div className={"expense-item"}>
+      <div>{month}</div>
+      <div>{year}</div>
+      <div>{day}</div>
+      <div className={"expense-item__description"}>
+        <h2>{props.title}</h2>
+        <div className={"expense-item__price"}>${props.amount}</div>
+      </div>
+    </div>
+  );
+}
+export default ExpenseItem;
+```
+
+props를 컴포넌트 안에서 변형과 가공도 가능.
+
+위의 예시는 date 객체를 이용한 가공.
+
+```tsx
+// components/ExpenseItem.js
+
+import "./ExpenseItem.css";
+import ExpenseDate from "./EspenseDate";
+
+function ExpenseItem(props) {
+  return (
+    <div className={"expense-item"}>
+      <div className={"expense-item__description"}>
+        <ExpenseDate date={props.date} />
+        <h2>{props.title}</h2>
+        <div className={"expense-item__price"}>${props.amount}</div>
+      </div>
+    </div>
+  );
+}
+export default ExpenseItem;
+```
+
+```tsx
+// components/ExpenseDate.js
+
+function ExpenseDate(props) {
+  const month = props.date.toLocaleString("en-US", { month: "long" });
+  const day = props.date.toLocaleString("en-US", { day: "2-digit" });
+  const year = props.date.getFullYear();
+
+  return (
+    <div>
+      <div>{month}</div>
+      <div>{year}</div>
+      <div>{day}</div>
+    </div>
+  );
+}
+
+export default ExpenseDate;
+```
+
+컴포넌트를 분리해서 재사용 가능. 똑같이 props를 원하는 것을 내려 보낼 수 있음.
