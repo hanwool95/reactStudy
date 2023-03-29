@@ -455,3 +455,181 @@ export default ExpenseDate;
 ```
 
 컴포넌트를 분리해서 재사용 가능. 똑같이 props를 원하는 것을 내려 보낼 수 있음.
+
+
+### 컴포넌트 실습 정답
+
+```tsx
+// components/Expenses.js
+
+import ExpenseItem from "./ExpenseItem";
+import "./ExpenseItem.css";
+
+function Expenses(props) {
+  return (
+    <div className={"expenses"}>
+      <ExpenseItem
+        title={props.items[0].title}
+        amount={props.items[0].amount}
+        date={props.items[0].date}
+      />
+      <ExpenseItem
+        title={props.items[1].title}
+        amount={props.items[1].amount}
+        date={props.items[1].date}
+      />
+      <ExpenseItem
+        title={props.items[2].title}
+        amount={props.items[2].amount}
+        date={props.items[2].date}
+      />
+      <ExpenseItem
+        title={props.items[3].title}
+        amount={props.items[3].amount}
+        date={props.items[3].date}
+      />
+    </div>
+  );
+}
+
+export default Expenses;
+```
+
+```tsx
+// App.js
+
+import Expenses from "./components/Expenses";
+
+function App() {
+  const expenses = [
+    {
+      id: 21,
+      title: "Car Insurance",
+      amount: 294.67,
+      date: new Date(2021, 2, 28),
+    },
+    {
+      id: 22,
+      title: "Car Insurance",
+      amount: 294.67,
+      date: new Date(2021, 2, 28),
+    },
+    {
+      id: 23,
+      title: "Car Insurance",
+      amount: 294.67,
+      date: new Date(2021, 2, 28),
+    },
+    {
+      id: 24,
+      title: "Car Insurance",
+      amount: 294.67,
+      date: new Date(2021, 2, 28),
+    },
+  ];
+
+  return (
+    <div>
+      <h2>Let's get started!</h2>
+      <Expenses items={expenses} />
+    </div>
+  );
+}
+
+export default App;
+```
+
+### 컴포지션 & children
+
+컴포지션: 작은 빌딩 블록으로 인터페이스 구축하는 것
+
+- 컴포넌트들은 props로 재설정 됨
+- 컴포넌트 열고 닫는 사이의 콘텐츠에 전달하고 싶을 경우! `children`
+
+```tsx
+// components/ExpenseItem.js
+
+import "./ExpenseItem.css";
+import ExpenseDate from "./EspenseDate";
+import Card from "./Card";
+
+function ExpenseItem(props) {
+  return (
+    <Card className={"expense-item"}>
+      <div className={"expense-item__description"}>
+        <ExpenseDate date={props.date} />
+        <h2>{props.title}</h2>
+        <div className={"expense-item__price"}>${props.amount}</div>
+      </div>
+    </Card>
+  );
+}
+export default ExpenseItem;
+```
+
+shell 역할을 하는 Card 컴포넌트 제작
+
+하지만 그냥 감싸서는 안의 컴포넌트들을 소실함.
+
+```tsx
+import "./Card.css";
+
+function Card(props) {
+  return <div className={"card"}>{props.children}</div>;
+}
+
+export default Card;
+```
+
+모든 리액트 컴포넌트가 갖는 특수한 props `children`
+
+Card 사이의 컴포넌트들은 children props 안에 들어가게 됨
+
+이렇게 래퍼 컴포넌트를 만들어서, 일부 중복된 코드들을 추출할 수 있음
+
+### JSX
+
+JSX 자체는 브라우저에서 지원하지 않고, 리액트가 변환해서 브라우저에 전달하는 것.
+
+브라우저에서 청크 파일 확인하면 복잡한 JSX 확인 가능. 하지만 이것은 가독성이 당연히 안 좋음.
+
+화면 뒷단에서는 변환이 이루어지고 있음. package.json에서 react import 하지 않아. 오래된 버전에서는 react import 해야 했지만, 지금은 하지 않음. JSX 코드는 react 라이브러리에서 변환시킴.
+
+`React.createElement`가 return하는 과정에서 call되는 것임.
+
+```tsx
+return React.create('div', {},
+				React.createElement('h2', {}, "Let's get started!"),
+				React.createElement(Expenses, {items: expenses})
+	);
+
+return (
+    <div>
+      <h2>Let's get started!</h2>
+      <Expenses items={expenses} />
+    </div>
+  );
+```
+
+첫 인자는 어떤 태그의 요소인지 전달해주고, 두 번째는 요소를 설정하는 attribute. 세 번째 인자 부터는 div 안에 있는 element 들.
+
+- 그래서 return 안에 root element 두 개 이상을 가질 수 없었던 것!!
+
+### 파일 정리
+
+프로젝트 진행되어서 파일 많아지면, 정리가 필요.
+
+UI나 User 컴포넌트, 특정 기능만 갖는 컴포넌트 등이 있어.
+
+components의 하위 폴더로 Expenses, UI 등 만들고 각각 을 배치할 수도 있어.
+
+### 대체 함수
+
+화살표 함수도 사용 가능.
+
+```tsx
+function App() {}
+
+const App2 = () => {}
+
+```
